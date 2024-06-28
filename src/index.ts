@@ -1,9 +1,6 @@
 import barba from '@barba/core'
 import { gsap } from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-interface HTMLElementWithListener extends HTMLElement {
-  showModalListener?: EventListener
-}
 
 window.Webflow ||= []
 window.Webflow.push(() => {
@@ -30,6 +27,14 @@ window.Webflow.push(() => {
             opacity: 0,
             duration: 1,
           })
+        },
+        afterEnter() {
+          // Réinitialiser les interactions Webflow
+          if (typeof Webflow !== 'undefined') {
+            Webflow.destroy() // Nettoyer les anciennes interactions
+            Webflow.ready() // Initialiser les nouvelles interactions
+            Webflow.require('ix2').init() // Initialiser les interactions ix2
+          }
         },
       },
     ],
@@ -61,41 +66,12 @@ window.Webflow.push(() => {
     })
   }
 
-  const showModalListener = () => {
-    const modal = document.querySelector('.modal_popup') as HTMLElement
-
-    gsap.timeline().to(
-      modal,
-      {
-        display: 'flex',
-        opacity: 1,
-        duration: 0.25,
-        ease: 'linear',
-      },
-      0,
-    )
-  }
-
   barba.hooks.after(() => {
     const anchor = localStorage.getItem('anchor')
 
     if (anchor) {
       scrollToElement(anchor)
       localStorage.removeItem('anchor')
-    }
-
-    if (window.location.pathname === '/') {
-      const modal_buttons = document.querySelectorAll(
-        '.modal_button:not(.is-nav)',
-      ) as NodeListOf<HTMLElementWithListener>
-
-      modal_buttons.forEach((button) => {
-        if (button.showModalListener) {
-          button.removeEventListener('click', showModalListener)
-        }
-        button.addEventListener('click', showModalListener)
-        button.showModalListener = showModalListener
-      })
     }
   })
 })
