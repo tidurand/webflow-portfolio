@@ -1,5 +1,11 @@
 # @tidurand/portfolio
 
+## 1.0.2
+
+### Patch Changes
+
+- 05111b8: Fix webflow interactions
+
 ## 1.0.1
 
 ### Patch Changes
